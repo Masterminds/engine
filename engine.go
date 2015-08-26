@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -50,8 +51,9 @@ func New(paths ...string) (*Engine, error) {
 	}
 
 	e := &Engine{
-		dirs:  paths,
-		cache: make(map[string]map[string]*template.Template, len(paths)),
+		dirs:   paths,
+		cache:  make(map[string]map[string]bool, len(paths)),
+		master: template.New("master"),
 	}
 
 	return e, e.parse()
@@ -61,9 +63,8 @@ type Engine struct {
 	// Order is important, so we keep dirs to maintain an ordering of themes.
 	dirs []string
 
-	// cache is a cache of parsed templates.
-	// Cache maps are of the form map[basePath][relPath]template.
-	cache map[string]map[string]*template.Template
+	cache  map[string]map[string]bool
+	master *template.Template
 }
 
 // Render looks for a template with the given name, then executes it with the given data.
@@ -79,9 +80,10 @@ type Engine struct {
 func (e *Engine) Render(name string, data interface{}) (string, error) {
 	n := filepath.Clean(name)
 	for _, d := range e.dirs {
-		if t, ok := e.cache[d][n]; ok {
+		if t, ok := e.cache[d][n]; ok && t {
 			var buf bytes.Buffer
-			err := t.ExecuteTemplate(&buf, n, data)
+			key := filepath.Join(d, n)
+			err := e.master.ExecuteTemplate(&buf, key, data)
 			return buf.String(), err
 		}
 	}
@@ -99,6 +101,13 @@ func (e *Engine) Asset(name string) (string, error) {
 	if !legalName(name) {
 		return "", IllegalName
 	}
+
+	// XXX: Should we allow .tpl files to be fetched as assets? Probably
+	// not. For now, denying.
+	if filepath.Ext(name) == ".tpl" {
+		return "", IllegalName
+	}
+
 	for _, d := range e.dirs {
 		p := filepath.Join(d, name)
 		if _, err := os.Stat(p); err == nil {
@@ -164,11 +173,11 @@ func (e *Engine) parse() error {
 		// An dir with no templates is totally legit. This directory may
 		// just contain other assets. So we add to the map and continue.
 		if files == nil {
-			e.cache[d] = map[string]*template.Template{}
+			e.cache[d] = map[string]bool{}
 			continue
 		}
 
-		e.cache[d] = make(map[string]*template.Template, len(files))
+		e.cache[d] = make(map[string]bool, len(files))
 		for _, f := range files {
 			// Second half of cache key.
 			r, err := filepath.Rel(d, f)
@@ -176,12 +185,20 @@ func (e *Engine) parse() error {
 				return err
 			}
 
-			t, err := template.New(f).ParseFiles(f)
+			// TODO: Reading the file and then casting it to a string
+			// doesn't feel like the right solution. But using ParseFiles
+			// creates its own naming scheme, which doesn't work for us.
+			data, err := ioutil.ReadFile(f)
 			if err != nil {
 				return err
 			}
 
-			e.cache[d][r] = t
+			// Assumption is that f is exactly the same as filepath.Join(d, r)
+			if _, err := e.master.New(f).Parse(string(data)); err != nil {
+				return err
+			}
+
+			e.cache[d][r] = true
 		}
 	}
 	return nil

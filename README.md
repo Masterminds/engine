@@ -1,4 +1,4 @@
-# The Engine: A Theme/Template Library for Go
+# The Engine: A Web Theme Engine for Go
 
 This library provides tools for managing themes (a collection of
 templates and supporting files) for Go. It allows theme chaining

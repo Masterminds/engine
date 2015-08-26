@@ -92,8 +92,8 @@ func TestRender(t *testing.T) {
 	paths := e.Paths()
 	if len(paths) != 1 {
 		t.Errorf("Expected 1 template. Found %d", len(paths))
-		for p := range paths {
-			println(p)
+		for _, p := range paths {
+			println("Template: ", p)
 		}
 	}
 
