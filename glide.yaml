@@ -1,0 +1,3 @@
+package: github.com/Masterminds/engine
+import:
+  - package: github.com/Masterminds/sprig

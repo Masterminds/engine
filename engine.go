@@ -9,6 +9,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/Masterminds/sprig"
 )
 
 // NoTemplateFound indicates that a desired template cannot be located.
@@ -31,8 +33,21 @@ var (
 // Each path is scanned for files that end with the extension '.tpl'.
 // Directories are not scanned recursively. Any other files or directories are
 // ignored.
+//
+// For convenience, the engine supports an additional set of template
+// functions as defined in Sprig:
+// 	https://github.com/Masterminds/sprig
+// These can be disabled by not passing the Sprig functions into NewEngine.
 func New(paths ...string) (*Engine, error) {
+	return NewEngine(paths, sprig.FuncMap(), []string{})
+}
 
+// NewEngine constructs a new *Engine.
+// NewEngine provides more control over the template engine than New.
+//
+// - funcMap is passed to the template.
+// - options are passed to the template.
+func NewEngine(paths []string, funcs template.FuncMap, options []string) (*Engine, error) {
 	// First, we do a quick normalization of all paths.
 	for i, d := range paths {
 		d = filepath.Clean(d)
@@ -54,6 +69,13 @@ func New(paths ...string) (*Engine, error) {
 		dirs:   paths,
 		cache:  make(map[string]map[string]bool, len(paths)),
 		master: template.New("master"),
+	}
+
+	if len(funcs) > 0 {
+		e.master.Funcs(funcs)
+	}
+	if len(options) > 0 {
+		e.master.Option(options...)
 	}
 
 	return e, e.parse()
