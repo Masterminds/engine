@@ -6,6 +6,7 @@ type Select struct {
 	Form, Name                              string
 	Size                                    uint64
 	Options                                 []OptionItem
+	Label                                   string
 }
 
 // DataList is a hidden option list used by other fields.
