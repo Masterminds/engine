@@ -1,9 +1,11 @@
 package engine
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/Masterminds/engine/form"
+	"golang.org/x/net/html"
 )
 
 func TestFormTemplate(t *testing.T) {
@@ -74,11 +76,36 @@ func TestFormTemplate(t *testing.T) {
 			Rows:  5,
 			Value: "Default text",
 		},
+		form.Password{Name: "password", Label: "Enter Password"},
+		form.Text{Name: "text"},
+		form.Submit{Name: "submit"},
+		form.Tel{Name: "tel"},
+		form.URL{Name: "url"},
+		form.Email{Name: "email"},
+		form.Date{Name: "date"},
+		form.Time{Name: "time"},
+		form.Number{Name: "number"},
+		form.Range{Name: "range"},
+		form.Color{Name: "color"},
+		form.Checkbox{Name: "checkbox"},
+		form.Radio{Name: "radio"},
+		form.File{Name: "file"},
+		form.Image{Name: "image"},
+		form.Reset{Name: "reset"},
+		form.Hidden{Name: "hidden"},
 	}
 
-	out, err := e.Render("form.html.tpl", f)
+	out, err := e.Render("#form", f)
 	if err != nil {
 		t.Errorf("Failed render of form.html.tpl: %s", err)
 	}
 	t.Log(out)
+
+	// Now we load the result with an HTML parser to ensure that it's
+	// well-formed.
+	read := strings.NewReader(out)
+	if _, err := html.Parse(read); err != nil {
+		t.Errorf("Failed to parse generated markup: %s", err)
+	}
+
 }

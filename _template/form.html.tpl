@@ -91,6 +91,75 @@
 {{end}}{{with .ReadOnly}}readonly
 {{end}}{{with .Required}}required{{end}}>{{.Value}}</textarea>{{end}}
 
+{{/* We define a template for each so that overrides are easy. */}}
+{{define "text"}}{{template "input" .}}{{end}}
+{{define "password"}}{{template "input" .}}{{end}}
+{{define "submit"}}{{template "input" .}}{{end}}
+{{define "tel"}}{{template "input" .}}{{end}}
+{{define "url"}}{{template "input" .}}{{end}}
+{{define "email"}}{{template "input" .}}{{end}}
+{{define "date"}}{{template "input" .}}{{end}}
+{{define "time"}}{{template "input" .}}{{end}}
+{{define "number"}}{{template "input" .}}{{end}}
+{{define "range"}}{{template "input" .}}{{end}}
+{{define "color"}}{{template "input" .}}{{end}}
+{{define "checkbox"}}{{template "input" .}}{{end}}
+{{define "radio"}}{{template "input" .}}{{end}}
+{{define "file"}}{{template "input" .}}{{end}}
+{{define "image"}}{{template "input" .}}{{end}}
+{{define "reset"}}{{template "input" .}}{{end}}
+{{define "hidden"}}{{template "input" .}}{{end}}
+
+{{define "buttoninput"}}
+{{if len .Label | lt 0}}<label for="{{.Name}}">.Label</label>
+{{end}}<input type="button" {{template "globalAttrs" .}}{{with .Name}}name="{{.}}"
+{{end}}{{with .Accept}}accept="{{.}}"
+{{end}}{{with .Alt}}alt="{{.}}"
+{{end}}{{with .Autocomplete}}autocomplete="{{.}}"
+{{end}}{{with .Dirname}}dirname="{{.}}"
+{{end}}{{with .Form}}form="{{.}}"
+{{end}}{{with .InputMode}}inputmode="{{.}}"
+{{end}}{{with .Placeholder}}placeholder="{{.}}"
+{{end}}{{with .Src}}src="{{.}}"
+{{end}}{{with .Value}}value="{{.}}"
+{{end}}{{with .Height}}height="{{.}}"
+{{end}}{{with .Width}}width="{{.}}"
+{{end}}{{with .Size}}size="{{.}}"
+{{end}}{{with .Autofocus}}autofocus
+{{end}}{{with .Checked}}checked
+{{end}}{{with .Disabled}}disabled
+{{end}}{{with .Required}}required
+{{end}}>{{end}}
+
+{{define "input"}}
+{{if len .Label | lt 0}}<label for="{{.Name}}">.Label</label>
+{{end}}<input type="{{typeOf . | lower}}" {{template "globalAttrs" .}}{{with .Name}}name="{{.}}"
+{{end}}{{with .Accept}}accept="{{.}}"
+{{end}}{{with .Alt}}alt="{{.}}"
+{{end}}{{with .Autocomplete}}autocomplete="{{.}}"
+{{end}}{{with .Dirname}}dirname="{{.}}"
+{{end}}{{with .Form}}form="{{.}}"
+{{end}}{{with .List}}list="{{.}}"
+{{end}}{{with .InputMode}}inputmode="{{.}}"
+{{end}}{{with .Min}}min="{{.}}"
+{{end}}{{with .Max}}max="{{.}}"
+{{end}}{{with .MaxLength}}maxlength="{{.}}"
+{{end}}{{with .Pattern}}pattern="{{.}}"
+{{end}}{{with .Placeholder}}placeholder="{{.}}"
+{{end}}{{with .Src}}src="{{.}}"
+{{end}}{{with .Step}}step="{{.}}"
+{{end}}{{with .Value}}value="{{.}}"
+{{end}}{{with .Height}}height="{{.}}"
+{{end}}{{with .Width}}width="{{.}}"
+{{end}}{{with .Size}}size="{{.}}"
+{{end}}{{with .Autofocus}}autofocus
+{{end}}{{with .Checked}}checked
+{{end}}{{with .Disabled}}disabled
+{{end}}{{with .Multiple}}multiple
+{{end}}{{with .ReadOnly}}readonly
+{{end}}{{with .Required}}required
+{{end}}>{{end}}
+
 
 {{define "fieldloop"}}
 {{range .}}
@@ -105,6 +174,25 @@
 {{if . | typeIsLike "form.DataList" }}{{template "datalist" . }}{{end}}
 {{if . | typeIsLike "form.Select" }}{{template "select" . }}{{end}}
 {{if . | typeIsLike "form.TextArea" }}{{template "textarea" . }}{{end}}
+{{if . | typeIsLike "form.Input" }}{{template "input" . }}{{end}}
+{{if . | typeIsLike "form.Password" }}{{template "password" . }}{{end}}
+{{if . | typeIsLike "form.Text" }}{{template "text" . }}{{end}}
+{{if . | typeIsLike "form.Submit" }}{{template "submit" . }}{{end}}
+{{if . | typeIsLike "form.Tel" }}{{template "tel" . }}{{end}}
+{{if . | typeIsLike "form.URL" }}{{template "url" . }}{{end}}
+{{if . | typeIsLike "form.Email" }}{{template "email" . }}{{end}}
+{{if . | typeIsLike "form.Date" }}{{template "date" . }}{{end}}
+{{if . | typeIsLike "form.Time" }}{{template "time" . }}{{end}}
+{{if . | typeIsLike "form.Number" }}{{template "number" . }}{{end}}
+{{if . | typeIsLike "form.Range" }}{{template "range" . }}{{end}}
+{{if . | typeIsLike "form.Color" }}{{template "color" . }}{{end}}
+{{if . | typeIsLike "form.Checkbox" }}{{template "checkbox" . }}{{end}}
+{{if . | typeIsLike "form.Radio" }}{{template "radio" . }}{{end}}
+{{if . | typeIsLike "form.File" }}{{template "file" . }}{{end}}
+{{if . | typeIsLike "form.Image" }}{{template "image" . }}{{end}}
+{{if . | typeIsLike "form.Reset" }}{{template "range" . }}{{end}}
+{{if . | typeIsLike "form.ButtonInput" }}{{template "buttoninput" . }}{{end}}
+{{if . | typeIsLike "form.Hidden" }}{{template "hidden" . }}{{end}}
 {{end}}
 {{end}}
 
@@ -116,6 +204,7 @@
 {{end}}{{template "fieldloop" .Fields}}
 {{end}}
 
+{{define "form"}}
 <form {{template "globalAttrs" .  }}{{with .Name}}name="{{.}}" {{end}}
 {{with .AcceptCharset}}acceptchars="{{.}}"
 {{end}}{{with .Enctype}}enctype="{{.}}"
@@ -126,4 +215,5 @@
 {{end}}{{with .Novalidate}}novalidate="true" {{end}}>
 {{template "fieldloop" .Fields}}
 </form>
+{{end}}
 

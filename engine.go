@@ -100,10 +100,19 @@ type Engine struct {
 // If the renderer cannot find a template, it returns NoTemplateFound. If
 // the template cannot be rendered, it may return a different error.
 func (e *Engine) Render(name string, data interface{}) (string, error) {
+	var buf bytes.Buffer
+
+	// Support explicitly named templates (things from a template
+	// define) by accessing them directly.
+	if strings.HasPrefix(name, "#") {
+		err := e.master.ExecuteTemplate(&buf, name[1:], data)
+		return buf.String(), err
+	}
+
+	// File-based templates.
 	n := filepath.Clean(name)
 	for _, d := range e.dirs {
 		if t, ok := e.cache[d][n]; ok && t {
-			var buf bytes.Buffer
 			key := filepath.Join(d, n)
 			err := e.master.ExecuteTemplate(&buf, key, data)
 			return buf.String(), err
@@ -216,8 +225,21 @@ func (e *Engine) parse() error {
 			}
 
 			// Assumption is that f is exactly the same as filepath.Join(d, r)
-			if _, err := e.master.New(f).Parse(string(data)); err != nil {
+			if newt, err := e.master.New(f).Parse(string(data)); err != nil {
 				return err
+			} else {
+				// TODO: Currently, these entries are unused, since we
+				// access globally defined named templates directly. But
+				// this provides useful debugging information about where
+				// a particular global template is defined.
+				for _, tpl := range newt.Templates() {
+					tname := tpl.Name()
+					// Skip the ones we already know about.
+					if tname == "master" || tname == f {
+						continue
+					}
+					e.cache[d][r+"#"+tname] = true
+				}
 			}
 
 			e.cache[d][r] = true
