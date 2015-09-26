@@ -24,18 +24,18 @@ func TestFormTemplate(t *testing.T) {
 	f.Autocomplete = true
 	f.Fields = []form.Field{
 		form.Button{
-			GlobalAttributes: form.GlobalAttributes{Id: "button-1"},
-			Name:             "button-1",
-			Value:            "Push Me!",
+			HTML:  form.HTML{Id: "button-1"},
+			Name:  "button-1",
+			Value: "Push Me!",
 		},
 		form.FieldSet{
 			Name:   "fset1",
 			Legend: "Look, Ma! A Fieldset!",
 			Fields: []form.Field{
 				&form.Button{
-					GlobalAttributes: form.GlobalAttributes{Id: "button-2"},
-					Name:             "button-2",
-					Value:            "Push Me Too!",
+					HTML:  form.HTML{Id: "button-2"},
+					Name:  "button-2",
+					Value: "Push Me Too!",
 				},
 			},
 		},
@@ -49,7 +49,7 @@ func TestFormTemplate(t *testing.T) {
 		form.Progress{Value: 0.5, Max: 1.0},
 		form.Meter{Value: 0.5, Max: 1.0, Min: 0.2, Optimum: 0.7, Low: 0.1, High: 0.5},
 		form.DataList{
-			GlobalAttributes: form.GlobalAttributes{Id: "dl-1"},
+			HTML: form.HTML{Id: "dl-1"},
 			Options: []form.Option{
 				{Value: "one", Label: "One"},
 				{Value: "two", Label: "Two"},

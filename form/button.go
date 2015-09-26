@@ -1,7 +1,7 @@
 package form
 
 type Button struct {
-	GlobalAttributes
+	HTML
 	Autofocus, Disabled           bool
 	Form, Menu, Name, Type, Value string
 }

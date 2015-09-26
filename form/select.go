@@ -1,7 +1,7 @@
 package form
 
 type Select struct {
-	GlobalAttributes
+	HTML
 	Autofocus, Disabled, Multiple, Required bool
 	Form, Name                              string
 	Size                                    uint64
@@ -11,21 +11,21 @@ type Select struct {
 
 // DataList is a hidden option list used by other fields.
 type DataList struct {
-	GlobalAttributes
+	HTML
 	Options []Option
 }
 
 type OptionItem interface{}
 
 type OptGroup struct {
-	GlobalAttributes
+	HTML
 	Label    string
 	Disabled bool
 	Options  []Option
 }
 
 type Option struct {
-	GlobalAttributes
+	HTML
 	Disabled, Selected bool
 	// A label is the user-visible text, while the value is what is
 	// sent to the server. Label may be rendered as phrasing content.

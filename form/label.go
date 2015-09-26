@@ -6,7 +6,7 @@ import (
 )
 
 type Label struct {
-	GlobalAttributes
+	HTML
 	For, Form string
 	//Content   html.Node
 	Text string

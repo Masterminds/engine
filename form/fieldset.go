@@ -1,7 +1,7 @@
 package form
 
 type FieldSet struct {
-	GlobalAttributes
+	HTML
 	Form, Name string
 	Disabled   bool
 	Fields     []Field

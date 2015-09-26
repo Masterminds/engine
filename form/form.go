@@ -32,17 +32,22 @@ const (
 	Auto = "auto"
 )
 
-type GlobalAttributes struct {
+// Attributes common across all HTML element.
+type HTML struct {
 	Class                                                       []string
 	AccessKey, Id, Dir, Lang, Style, TabIndex, Title, Translate string
 	ContentEditable, Hidden                                     OptionalBool
+	Role                                                        string
 
 	// Data stores arbitrary attributes, such as data-* fields. It is up to
 	// the implementation to know how to deal with these fields.
 	Data map[string]string
+
+	// Attributes prefixed "aria-"
+	Aria map[string]string
 }
 
-func (g GlobalAttributes) EnsureId(seed string) string {
+func (g HTML) EnsureId(seed string) string {
 	if len(g.Id) > 0 {
 		return g.Id
 	} else if len(seed) > 0 {
@@ -52,7 +57,7 @@ func (g GlobalAttributes) EnsureId(seed string) string {
 	return ""
 }
 
-func (g GlobalAttributes) Attach(node *html.Node) {
+func (g HTML) Attach(node *html.Node) {
 	attrs := []html.Attribute{}
 	if g.ContentEditable > 0 {
 		if g.ContentEditable == OTrue {
@@ -91,7 +96,7 @@ func New(name, action string) *Form {
 }
 
 type Form struct {
-	GlobalAttributes
+	HTML
 	AcceptCharset, Enctype, Action, Method, Name, Target string
 	Autocomplete, Novalidate                             bool
 	Fields                                               []Field
@@ -112,8 +117,8 @@ func (f *Form) Element() *html.Node {
 	n.Attr = structToAttrs(f, "AcceptCharset", "Enctype", "Action", "Method", "Name", "Target")
 
 	// We want to at least try to set an ID.
-	f.GlobalAttributes.Id = f.GlobalAttributes.EnsureId(f.Name)
-	f.GlobalAttributes.Attach(n)
+	f.HTML.Id = f.HTML.EnsureId(f.Name)
+	f.HTML.Attach(n)
 
 	return n
 }

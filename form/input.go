@@ -65,7 +65,7 @@ type Hidden Input
 //
 // It should not generally be used directly.
 type Input struct {
-	GlobalAttributes
+	HTML
 	Accept, Alt, Autocomplete, Dirname, Form, List, InputMode, Max, Min, MaxLength string
 	Name, Pattern, Placeholder, Src, Step, Value                                   string
 	Autofocus, Checked, Disabled, Multiple, ReadOnly, Required                     bool

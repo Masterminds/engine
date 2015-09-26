@@ -1,7 +1,7 @@
 package form
 
 type Keygen struct {
-	GlobalAttributes
+	HTML
 	Challenge, Form, KeyType, Name string
 	Autofocus, Disabled            bool
 }

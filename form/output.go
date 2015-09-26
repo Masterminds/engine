@@ -1,6 +1,6 @@
 package form
 
 type Output struct {
-	GlobalAttributes
+	HTML
 	For, Form, Name string
 }
