@@ -2,6 +2,7 @@
 {{end}}{{with .AccessKey}}accesskey="{{.}}"
 {{end}}{{with .Dir}}dir="{{.}}"
 {{end}}{{with .Lang}}lang="{{.}}"
+{{end}}{{with .Role}}role="{{.}}"
 {{end}}{{with .Style}}style="{{.}}"
 {{end}}{{with .TabIndex}}tabindex="{{.}}"
 {{end}}{{with .Title}}title="{{.}}"
@@ -9,6 +10,7 @@
 {{end}}{{if eq 1 .ContentEditable}}contenteditable="true"{{else if eq 2 .ContentEditable }}contenteditable="false"
 {{end}}{{if .Hidden | eq 1}}hidden="true"{{else if .Hidden | eq 2 }}hidden="false"
 {{end}}{{with .Class}}class="{{join " " .}}"
+{{end}}{{with .Aria}}{{range $k, $v := .}}{{$k}}="{{$v}}"{{end}}
 {{end}}{{with .Data}}{{range $k, $v := .}}{{$k}}="{{$v}}"{{end}}{{end}}{{end}}
 
 {{define "form.button"}}<button {{template "globalAttrs" .}}{{with .Name}}name="{{.}}"
@@ -161,6 +163,7 @@
 {{end}}>{{end}}
 
 
+
 {{define "form.fieldloop"}}
 {{range .}}
 <p>{{typeOf .}}</p>
@@ -193,6 +196,7 @@
 {{if . | typeIsLike "form.Reset" }}{{template "form.range" . }}{{end}}
 {{if . | typeIsLike "form.ButtonInput" }}{{template "form.buttoninput" . }}{{end}}
 {{if . | typeIsLike "form.Hidden" }}{{template "form.hidden" . }}{{end}}
+{{if . | typeIsLike "form.Div" }}{{template "form.div" .}}{{end}}
 {{end}}
 {{end}}
 
@@ -202,7 +206,10 @@
 {{end}}{{if .Disabled}}disabled="true"
 {{end}}>{{with .Legend}}<legend>{{.}}</legend>
 {{end}}{{template "form.fieldloop" .Fields}}
-{{end}}
+</fieldset>{{end}}
+
+{{define "form.div"}}<div {{template "globalAttrs" .}}>{{template "form.fieldloop" .Fields}}</div>{{end}}
+
 
 {{define "form"}}
 <form {{template "globalAttrs" .  }}{{with .Name}}name="{{.}}" {{end}}

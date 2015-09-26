@@ -91,6 +91,15 @@ func (g HTML) Attach(node *html.Node) {
 	node.Attr = append(node.Attr, attrs...)
 }
 
+// Divs appear frequently in forms, so we're punting and supporting them.
+type Div struct {
+	HTML
+	Fields []Field
+}
+
+// String is for PCData that can be arbitarily embeded in a []Field list.
+type String string
+
 func New(name, action string) *Form {
 	return &Form{Name: name, Action: action}
 }
