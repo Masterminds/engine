@@ -30,6 +30,7 @@ func TestFormFields(t *testing.T) {
 		Action: "/action",
 		Fields: []Field{
 			Div{HTML: {Class: []string{"test"}}},
+			String("test"),
 			Button{Name: "Button"},
 			ButtonInput{Name: "buttonInput"},
 			Password{Name: "password", Size: 10},

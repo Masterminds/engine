@@ -197,6 +197,7 @@
 {{if . | typeIsLike "form.ButtonInput" }}{{template "form.buttoninput" . }}{{end}}
 {{if . | typeIsLike "form.Hidden" }}{{template "form.hidden" . }}{{end}}
 {{if . | typeIsLike "form.Div" }}{{template "form.div" .}}{{end}}
+{{if . | typeIsLike "form.String" }}.{{end}}
 {{end}}
 {{end}}
 
