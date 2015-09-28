@@ -14,6 +14,7 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
+// FormElement describes any form element capable of expression as an html.Node.
 type FormElement interface {
 	Element() *html.Node
 }
@@ -21,18 +22,28 @@ type FormElement interface {
 type OptionalBool uint8
 
 const (
+	// Nothing set, results in inheriting parent settings.
 	ONone OptionalBool = iota
+	// True
 	OTrue
+	// False
 	OFalse
 )
 
 const (
-	LTR  = "ltr"
-	RTL  = "rtl"
+	// Left-to-right
+	LTR = "ltr"
+	// Right-to-left
+	RTL = "rtl"
+	// Determine based on UA
 	Auto = "auto"
 )
 
-// Attributes common across all HTML element.
+// HTML captures a group of attributes common across all HTML elements.
+//
+// These attributes are all defined as Global, ARIA and Data attributes in
+// the HTML5 specification. Because all of these can be applied to any
+// form content, they are exposed here.
 type HTML struct {
 	Class                                                       []string
 	AccessKey, Id, Dir, Lang, Style, TabIndex, Title, Translate string
@@ -47,6 +58,7 @@ type HTML struct {
 	Aria map[string]string
 }
 
+// EnsureId ensures that an HTML has an ID attribute.
 func (g HTML) EnsureId(seed string) string {
 	if len(g.Id) > 0 {
 		return g.Id
@@ -57,6 +69,7 @@ func (g HTML) EnsureId(seed string) string {
 	return ""
 }
 
+// Attache attaches these attributes to an html.Node.
 func (g HTML) Attach(node *html.Node) {
 	attrs := []html.Attribute{}
 	if g.ContentEditable > 0 {
@@ -100,10 +113,17 @@ type Div struct {
 // String is for PCData that can be arbitarily embeded in a []Field list.
 type String string
 
+// New creates a new form with the Name and Action fields set.
 func New(name, action string) *Form {
 	return &Form{Name: name, Action: action}
 }
 
+// Form describes an HTML5 form.
+//
+// A form can encapsulate an arbitrary number of form.Field objects.
+//
+// Forms can be create with the New() function, or instantiated directly.
+// Then are typically rendered through the form templating system.
 type Form struct {
 	HTML
 	AcceptCharset, Enctype, Action, Method, Name, Target string
@@ -111,11 +131,13 @@ type Form struct {
 	Fields                                               []Field
 }
 
+// Add adds any number of fields to a form.
 func (f *Form) Add(field ...Field) *Form {
 	f.Fields = append(f.Fields, field...)
 	return f
 }
 
+// Element retrieves the form as an html.Node of type ElementNode.
 func (f *Form) Element() *html.Node {
 	n := &html.Node{
 		Type:     html.ElementNode,
