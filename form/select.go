@@ -1,5 +1,6 @@
 package form
 
+// Select defines a selection list form element.
 type Select struct {
 	HTML
 	Autofocus, Disabled, Multiple, Required bool
@@ -15,8 +16,13 @@ type DataList struct {
 	Options []Option
 }
 
+// OptionItem describes any item that can be a member of an options list.
+//
+// Select fields allow option items, while DataLists are more strict, and
+// require Option types.
 type OptionItem interface{}
 
+// OptGroup describes a list of options.
 type OptGroup struct {
 	HTML
 	Label    string
@@ -24,6 +30,7 @@ type OptGroup struct {
 	Options  []Option
 }
 
+// Option describes an individual option in a selection, datalist, or optgroup.
 type Option struct {
 	HTML
 	Disabled, Selected bool

@@ -44,6 +44,12 @@ const (
 // These attributes are all defined as Global, ARIA and Data attributes in
 // the HTML5 specification. Because all of these can be applied to any
 // form content, they are exposed here.
+//
+// The allowed values for all of these are explained in the HTML5 spec.
+// Because we strive more for expression in the browser than semantic
+// correctness, here and elsewhere we rarely force a particular value to
+// conform to the spec. Typically, typing is as close as we get to
+// enforcement.
 type HTML struct {
 	Class                                                       []string
 	AccessKey, Id, Dir, Lang, Style, TabIndex, Title, Translate string
@@ -102,12 +108,6 @@ func (g HTML) Attach(node *html.Node) {
 	attrs = append(attrs, structToAttrs(g, s...)...)
 
 	node.Attr = append(node.Attr, attrs...)
-}
-
-// Divs appear frequently in forms, so we're punting and supporting them.
-type Div struct {
-	HTML
-	Fields []Field
 }
 
 // String is for PCData that can be arbitarily embeded in a []Field list.
