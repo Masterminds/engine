@@ -166,7 +166,6 @@
 
 {{define "form.fieldloop"}}
 {{range .}}
-<p>{{typeOf .}}</p>
 {{if . | typeIsLike "form.Button" }}{{template "form.button" . }}{{end}}
 {{if . | typeIsLike "form.FieldSet" }}{{template "form.fieldset" . }}{{end}}
 {{if . | typeIsLike "form.Label" }}{{template "form.label" . }}{{end}}
@@ -197,7 +196,7 @@
 {{if . | typeIsLike "form.ButtonInput" }}{{template "form.buttoninput" . }}{{end}}
 {{if . | typeIsLike "form.Hidden" }}{{template "form.hidden" . }}{{end}}
 {{if . | typeIsLike "form.Div" }}{{template "form.div" .}}{{end}}
-{{if . | typeIsLike "form.String" }}.{{end}}
+{{if . | typeIsLike "form.String" }}{{.}}{{end}}
 {{end}}
 {{end}}
 
