@@ -13,6 +13,8 @@ With this library, you can:
 - Cascade and override themes
 - Provide easy support for re-theming an existing app
 
+[![Build Status](https://travis-ci.org/Masterminds/engine.svg)](https://travis-ci.org/Masterminds/engine) [![GoDoc](https://godoc.org/github.com/Masterminds/engine?status.png)](https://godoc.org/github.com/Masterminds/engine) [![Go Report Card](http://goreportcard.com/badge/Masterminds/engine)](http://goreportcard.com/report/Masterminds/engine)
+
 ## Usage
 
 Say you have the following theme directories, with the following files:
