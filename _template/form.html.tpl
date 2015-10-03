@@ -105,12 +105,11 @@
 {{define "form.number"}}{{template "form.input" .}}{{end}}
 {{define "form.range"}}{{template "form.input" .}}{{end}}
 {{define "form.color"}}{{template "form.input" .}}{{end}}
-{{define "form.checkbox"}}{{template "form.input" .}}{{end}}
-{{define "form.radio"}}{{template "form.input" .}}{{end}}
 {{define "form.file"}}{{template "form.input" .}}{{end}}
 {{define "form.image"}}{{template "form.input" .}}{{end}}
 {{define "form.reset"}}{{template "form.input" .}}{{end}}
 {{define "form.hidden"}}{{template "form.input" .}}{{end}}
+{{define "form.checkbox"}}{{template "form.radio" .}}{{end}}
 
 {{define "form.buttoninput"}}
 {{if len .Label | lt 0}}<label for="{{.Name}}">.Label</label>
@@ -162,6 +161,34 @@
 {{end}}{{with .Required}}required
 {{end}}>{{end}}
 
+{{define "form.radio"}}{{/* Also use this for checkboxes */}}
+{{if len .Label | lt 0}}<label for="{{.Name}}">
+{{end}}<input type="{{$t := typeOf . | split "."}}{{lower $t._1}}" {{template "globalAttrs" .}}{{with .Name}}name="{{.}}"
+{{end}}{{with .Accept}}accept="{{.}}"
+{{end}}{{with .Alt}}alt="{{.}}"
+{{end}}{{with .Autocomplete}}autocomplete="{{.}}"
+{{end}}{{with .Dirname}}dirname="{{.}}"
+{{end}}{{with .Form}}form="{{.}}"
+{{end}}{{with .List}}list="{{.}}"
+{{end}}{{with .InputMode}}inputmode="{{.}}"
+{{end}}{{with .Min}}min="{{.}}"
+{{end}}{{with .Max}}max="{{.}}"
+{{end}}{{with .MaxLength}}maxlength="{{.}}"
+{{end}}{{with .Pattern}}pattern="{{.}}"
+{{end}}{{with .Placeholder}}placeholder="{{.}}"
+{{end}}{{with .Src}}src="{{.}}"
+{{end}}{{with .Step}}step="{{.}}"
+{{end}}{{with .Value}}value="{{.}}"
+{{end}}{{with .Height}}height="{{.}}"
+{{end}}{{with .Width}}width="{{.}}"
+{{end}}{{with .Size}}size="{{.}}"
+{{end}}{{with .Autofocus}}autofocus
+{{end}}{{with .Checked}}checked
+{{end}}{{with .Disabled}}disabled
+{{end}}{{with .Multiple}}multiple
+{{end}}{{with .ReadOnly}}readonly
+{{end}}{{with .Required}}required
+{{end}}>{{if len.Label | lt 0}}{{.Label}}</label>{{end}}{{end}}
 
 
 {{define "form.fieldloop"}}
