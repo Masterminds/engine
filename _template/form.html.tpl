@@ -188,7 +188,7 @@
 {{end}}{{with .Multiple}}multiple
 {{end}}{{with .ReadOnly}}readonly
 {{end}}{{with .Required}}required
-{{end}}>{{if len.Label | lt 0}}{{.Label}}</label>{{end}}{{end}}
+{{end}}>{{if len .Label | lt 0}}{{.Label}}</label>{{end}}{{end}}
 
 
 {{define "form.fieldloop"}}
