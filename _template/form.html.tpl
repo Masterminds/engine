@@ -134,7 +134,7 @@
 {{end}}>{{end}}
 
 {{define "form.input"}}
-{{if len .Label | lt 0}}<label for="{{.Name}}">.Label</label>
+{{if len .Label | lt 0}}<label for="{{.Name}}">{{.Label}}</label>
 {{end}}<input type="{{$t := typeOf . | split "."}}{{lower $t._1}}" {{template "globalAttrs" .}}{{with .Name}}name="{{.}}"
 {{end}}{{with .Accept}}accept="{{.}}"
 {{end}}{{with .Alt}}alt="{{.}}"
