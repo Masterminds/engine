@@ -1,6 +1,7 @@
 package form
 
 import (
+	"fmt"
 	"net/url"
 	"testing"
 	"time"
@@ -91,4 +92,51 @@ func TestFormHandler(t *testing.T) {
 	if cheese != "cheese" {
 		t.Errorf("Expected cheese, got %q", cheese)
 	}
+}
+
+func Example() {
+
+	// Create a new form:
+	f := New("My Form", "/submit")
+
+	// Add some fields
+	f.Fields = []Field{
+		&Text{Name: "username"},
+		&Password{Name: "password"},
+	}
+
+	// Prepare the form using the default form handler.
+	id, err := DefaultFormHandler.Prepare(f)
+	if err != nil {
+		fmt.Printf("Error preparing form: %s", err)
+		return
+	}
+
+	// Render the form to the user agent. Typlically you do this
+	// with a template.
+
+	// When the form is submitted, it will return something like this:
+	vals := &url.Values{
+		"username":      []string{"matt"},
+		"password":      []string{"secret"},
+		SecureTokenName: []string{id},
+	}
+
+	// We can pass in the values and retrieve the form, with the values
+	// all entered on the appropriate element.
+	ff, err := DefaultFormHandler.Retrieve(vals)
+	if err != nil {
+		fmt.Printf("Failed to retrieve form: %s", err)
+		return
+	}
+
+	// Now we can access the fields directly
+	user := ff.Fields[0].(*Text).Value
+	pass := ff.Fields[1].(*Password).Value
+
+	fmt.Println(user)
+	fmt.Println(pass)
+	// Output:
+	// matt
+	// secret
 }
