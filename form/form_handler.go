@@ -105,6 +105,22 @@ func reconcileFields(fields []Field, data *url.Values, fm *Form) error {
 			reconcileFields(f.Fields, data, fm)
 		case *FieldSet:
 			reconcileFields(f.Fields, data, fm)
+		case *Select:
+			val := data.Get(f.Name)
+			for _, o := range f.Options {
+				switch o := o.(type) {
+				case OptGroup:
+					for _, oo := range o.Options {
+						if oo.Value == val {
+							oo.Selected = true
+						}
+					}
+				case Option:
+					if o.Value == val {
+						o.Selected = true
+					}
+				}
+			}
 		case *Radio:
 			if val := data.Get(f.Name); val == f.Value {
 				//fmt.Printf("name=%q value=%q is checked\n", f.Name, f.Value)
