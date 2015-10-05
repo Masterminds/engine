@@ -4,6 +4,26 @@ This is an abstraction for defining forms in text, and accessing them
 accordingly. It is partially inspired by Drupal's form library.
 
 This generates HTML5 forms. http://www.w3.org/TR/html5/forms.html
+
+In this package, you will find:
+
+	- a Form type for declaring a new form
+	- types for each form field type
+	- the FormHandler for automating form storage, submission, and retrieval
+	- secure tokens for mitigating XSS attacks
+	- a caching framework for storing form data (used by FormHandler)
+
+Engine also provides templates for rendering a form into HTML. The expected
+form workflow goes something like this:
+
+	1. Declare a form in-code
+	2. Prepare the form, which adds security and caches a copy
+	3. Render the form to HTML and serve it to the client
+	4. On form submission, get the form values
+	5. Look up the form and populate it with the submitted values
+	6. Work with the returned form
+
+The example below illustrates how most of this is done by the library.
 */
 package form
 
