@@ -3,6 +3,7 @@ package form
 import (
 	"net/url"
 	"testing"
+	"time"
 )
 
 func TestReconcile(t *testing.T) {
@@ -29,7 +30,7 @@ func TestReconcile(t *testing.T) {
 		"stooge":    []string{"Larry", "Moe"},
 	}
 
-	reconcile(f, &v)
+	Reconcile(f, &v)
 
 	rval := f.Fields[0].(*Text).Value
 	if rval != "world" {
@@ -50,5 +51,44 @@ func TestReconcile(t *testing.T) {
 	}
 	if f.Fields[7].(*Checkbox).Checked {
 		t.Errorf("Expected %s to be unchecked.", f.Fields[7].(*Checkbox).Value)
+	}
+}
+
+func TestFormHandler(t *testing.T) {
+	fh := NewFormHandler(NewCache(), time.Minute)
+
+	f := New("test", "test")
+	f.Fields = []Field{
+		&Password{Name: "p", Value: "secret"},
+	}
+
+	id, err := fh.Prepare(f)
+	if err != nil {
+		t.Errorf("Error preparing form: %s", err)
+	}
+
+	if len(id) < SecurityTokenLength {
+		t.Errorf("Expected token length %d, got %d", SecurityTokenLength, len(id))
+	}
+
+	if ff, err := fh.Get(id); err != nil {
+		t.Errorf("Could not get form %s: %s", id, err)
+	} else if ff.Name != "test" {
+		t.Errorf("Expected form named 'test', got %q", ff.Name)
+	}
+
+	vals := &url.Values{
+		"p":             []string{"cheese"},
+		SecureTokenName: []string{id},
+	}
+
+	ff, err := fh.Retrieve(vals)
+	if err != nil {
+		t.Errorf("Failed to retrieve form: %s", err)
+	}
+
+	cheese := ff.Fields[0].(*Password).Value
+	if cheese != "cheese" {
+		t.Errorf("Expected cheese, got %q", cheese)
 	}
 }

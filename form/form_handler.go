@@ -70,7 +70,7 @@ func (f *FormHandler) Retrieve(data *url.Values) (*Form, error) {
 		return nil, err
 	}
 
-	if err := reconcile(fm, data); err != nil {
+	if err := Reconcile(fm, data); err != nil {
 		// Form might still be useful in this case.
 		return fm, err
 	}
@@ -87,11 +87,12 @@ func (f *FormHandler) Remove(id string) error {
 	return f.cache.Remove(id)
 }
 
-// reconcile modifies a form in place, merging the data into the form's Value fields.
+// Reconcile modifies a form in place, merging the data into the form's Value fields.
 //
-// Minimal validity checking is done (e.g. types are matched), but more
-// sophisticated validation must be done elsewhere.
-func reconcile(fm *Form, data *url.Values) error {
+// Validation is not handled by the reconciler.
+//
+// Normally, reconciliation will happen via the FormHandler's Retrieve method.
+func Reconcile(fm *Form, data *url.Values) error {
 	return reconcileFields(fm.Fields, data, fm)
 }
 
