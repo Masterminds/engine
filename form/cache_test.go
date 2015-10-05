@@ -25,7 +25,7 @@ func TestCache(t *testing.T) {
 	}
 
 	c.Remove(id)
-	if _, err := c.Get(id); err != FormNotFound {
+	if _, err := c.Get(id); err != ErrFormNotFound {
 		t.Errorf("Expected entry to be removed, but it's here.")
 	}
 
