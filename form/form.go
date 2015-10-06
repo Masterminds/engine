@@ -28,6 +28,7 @@ The example below illustrates how most of this is done by the library.
 package form
 
 import (
+	"net/url"
 	"strings"
 
 	"golang.org/x/net/html"
@@ -172,4 +173,83 @@ func (f *Form) Element() *html.Node {
 	f.HTML.Attach(n)
 
 	return n
+}
+
+// AsValues converts a form to its name/value pairs.
+//
+// This is a "lossy" conversion. It only retains elements that have
+// a meaningful notion of "value" (like text, select, button, and
+// checkbox), but omits elements like Div, Output, OptGroup, and
+// FieldSet that do not have a meaningful notion of value.
+//
+// For fields that commonly can have multiple values (Select, Checkbox),
+// values are appended. For elements that do not admit multiple values
+// (Text, Radio, TextArea, etc), only one value is set.
+func (f *Form) AsValues() *url.Values {
+	v := &url.Values{}
+	asValues(f.Fields, v)
+	return v
+}
+
+func asValues(fields []Field, vals *url.Values) {
+	for _, field := range fields {
+		switch field := field.(type) {
+		case *Div:
+			asValues(field.Fields, vals)
+		case *FieldSet:
+			asValues(field.Fields, vals)
+		case *Checkbox:
+			if field.Checked {
+				vals.Add(field.Name, field.Value)
+			}
+		case *Radio:
+			if field.Checked {
+				vals.Add(field.Name, field.Value)
+			}
+		case *Select:
+			for _, o := range field.Options {
+				if o, ok := o.(*OptGroup); ok {
+					for _, oo := range o.Options {
+						vals.Add(field.Name, oo.Value)
+					}
+					continue
+				}
+				if o, ok := o.(*Option); ok && o.Selected {
+					vals.Add(field.Name, o.Value)
+				}
+			}
+		case *Text:
+			vals.Set(field.Name, field.Value)
+		case *Password:
+			vals.Set(field.Name, field.Value)
+		case *Submit:
+			vals.Set(field.Name, field.Value)
+		case *Tel:
+			vals.Set(field.Name, field.Value)
+		case *URL:
+			vals.Set(field.Name, field.Value)
+		case *Email:
+			vals.Set(field.Name, field.Value)
+		case *Date:
+			vals.Set(field.Name, field.Value)
+		case *Time:
+			vals.Set(field.Name, field.Value)
+		case *Number:
+			vals.Set(field.Name, field.Value)
+		case *Range:
+			vals.Set(field.Name, field.Value)
+		case *Color:
+			vals.Set(field.Name, field.Value)
+		case *Image:
+			vals.Set(field.Name, field.Value)
+		case *Button:
+			vals.Set(field.Name, field.Value)
+		case *ButtonInput:
+			vals.Set(field.Name, field.Value)
+		case *Hidden:
+			vals.Set(field.Name, field.Value)
+		case *TextArea:
+			vals.Set(field.Name, field.Value)
+		}
+	}
 }

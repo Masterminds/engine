@@ -13,7 +13,7 @@ type Select struct {
 // DataList is a hidden option list used by other fields.
 type DataList struct {
 	HTML
-	Options []Option
+	Options []*Option
 }
 
 // OptionItem describes any item that can be a member of an options list.
@@ -27,7 +27,7 @@ type OptGroup struct {
 	HTML
 	Label    string
 	Disabled bool
-	Options  []Option
+	Options  []*Option
 }
 
 // Option describes an individual option in a selection, datalist, or optgroup.
