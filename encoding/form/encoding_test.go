@@ -147,29 +147,36 @@ func TestAssignToMap(t *testing.T) {
 	}
 }
 
+type intStruct struct {
+	I   int
+	I8  int8
+	I16 int16
+	I32 int32
+	I64 int64
+}
+
 func TestAssignToInt(t *testing.T) {
 
-	var i int = 8
-	var i8 int8 = 8
-	var i16 int16 = 8
-	var i32 int32 = 8
-	var i64 int64 = 8
+	is := &intStruct{8, 8, 8, 8, 8}
 
 	tests := []struct {
 		name string
 		rv   reflect.Value
 		src  string
 	}{
-		{"int", reflect.ValueOf(&i), "64"},
-		{"int8", reflect.ValueOf(&i8), "8"},
-		{"int16", reflect.ValueOf(&i16), "16"},
-		{"int32", reflect.ValueOf(&i32), "32"},
-		{"int64", reflect.ValueOf(&i64), "64"},
+		{"int", reflect.ValueOf(&is.I), "64"},
+		{"int8", reflect.ValueOf(&is.I8), "8"},
+		{"int16", reflect.ValueOf(&is.I16), "16"},
+		{"int32", reflect.ValueOf(&is.I32), "32"},
+		{"int64", reflect.ValueOf(&is.I64), "64"},
 	}
 
 	for _, tt := range tests {
 		if err := assignToInt(tt.rv, tt.src); err != nil {
 			t.Fatal(err)
+		}
+		if got := fmt.Sprintf("%v", reflect.Indirect(tt.rv).Interface()); got != tt.src {
+			t.Errorf("Expected %q, got %q", tt.src, got)
 		}
 	}
 }
@@ -177,6 +184,9 @@ func TestAssignToInt(t *testing.T) {
 type AssignmentTestStruct struct {
 	FirstName string `form:"first_name"`
 	LastName  string
+	Year      uint32
+	Speed     float64
+	IsUseless bool
 }
 
 func TestAssignToStruct(t *testing.T) {
@@ -195,5 +205,24 @@ func TestAssignToStruct(t *testing.T) {
 	}
 	if ats.LastName != "Butcher" {
 		t.Errorf("Expected ats.LastName to be Butcher, got %q", ats.LastName)
+	}
+
+	if err := assignToStruct(rats, "Year", []string{"1999"}); err != nil {
+		t.Errorf("Unexpected error assigning Year: %s", err)
+	}
+	if ats.Year != 1999 {
+		t.Errorf("Expected Year=1999, got %d", ats.Year)
+	}
+	if err := assignToStruct(rats, "Speed", []string{"1.23"}); err != nil {
+		t.Errorf("Unexpected error assigning Year: %s", err)
+	}
+	if ats.Speed != 1.23 {
+		t.Errorf("Expected speed=1.23, got %d", ats.Speed)
+	}
+	if err := assignToStruct(rats, "IsUseless", []string{"true"}); err != nil {
+		t.Errorf("Unexpected error assigning Year: %s", err)
+	}
+	if !ats.IsUseless {
+		t.Error("Expected IsUseless to be true")
 	}
 }

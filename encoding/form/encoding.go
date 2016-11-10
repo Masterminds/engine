@@ -77,7 +77,7 @@ func assignToStruct(rv reflect.Value, key string, values []string) error {
 		}
 		if tag.name == key {
 			fmt.Printf("Assigning %s = %q\n", key, values[0])
-			rv.FieldByName(f.Name).Set(reflect.ValueOf(values[0]))
+			assignToStructField(rv.FieldByName(f.Name), values)
 			return nil
 		}
 	}
@@ -98,20 +98,61 @@ func assignToStructField(rv reflect.Value, val []string) error {
 			vv = val[0]
 		}
 		return assignToInt(rv, vv)
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		vv := "0"
+		if len(val) > 0 {
+			vv = val[0]
+		}
+		return assignToUint(rv, vv)
+	case reflect.Float32, reflect.Float64:
+		vv := "0"
+		if len(val) > 0 {
+			vv = val[0]
+		}
+		return assignToFloat(rv, vv)
+	case reflect.Bool:
+		b, err := strconv.ParseBool(val[0])
+		reflect.Indirect(rv).Set(reflect.ValueOf(b))
+		return err
 	default:
 		return fmt.Errorf("Unsupported kind")
 	}
 }
 
 func assignToInt(rv reflect.Value, val string) error {
-	if !rv.CanSet() {
-		return fmt.Errorf("cannot set %q", rv.Type().Name())
+	rvv := reflect.Indirect(rv)
+	if !rvv.CanSet() {
+		return fmt.Errorf("cannot set %q (%s)", rv.Type().Name(), rv.Kind().String())
 	}
 	ival, err := strconv.ParseInt(val, 0, 0)
 	if err != nil {
 		return err
 	}
-	rv.SetInt(ival)
+	rvv.SetInt(ival)
+	return nil
+}
+func assignToUint(rv reflect.Value, val string) error {
+	rvv := reflect.Indirect(rv)
+	if !rvv.CanSet() {
+		return fmt.Errorf("cannot set %q (%s)", rv.Type().Name(), rv.Kind().String())
+	}
+	ival, err := strconv.ParseUint(val, 0, 0)
+	if err != nil {
+		return err
+	}
+	rvv.SetUint(ival)
+	return nil
+}
+func assignToFloat(rv reflect.Value, val string) error {
+	rvv := reflect.Indirect(rv)
+	if !rvv.CanSet() {
+		return fmt.Errorf("cannot set %q (%s)", rv.Type().Name(), rv.Kind().String())
+	}
+	ival, err := strconv.ParseFloat(val, 64)
+	if err != nil {
+		return err
+	}
+	rvv.SetFloat(ival)
 	return nil
 }
 
