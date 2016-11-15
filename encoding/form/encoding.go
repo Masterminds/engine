@@ -33,7 +33,7 @@ func walk(val reflect.Value, v url.Values) error {
 }
 
 func findIn(rv reflect.Value, key string, values []string) error {
-	switch rv.Kind() {
+	switch reflect.Indirect(rv).Kind() {
 	case reflect.Map:
 		// The map must take string keys.
 		if _, ok := rv.Interface().(map[string]interface{}); ok {
@@ -41,6 +41,7 @@ func findIn(rv reflect.Value, key string, values []string) error {
 		}
 	case reflect.Struct:
 		// Look for struct field named 'key'.
+		//return assignToStruct(reflect.Indirect(rv), key, values)
 		return assignToStruct(rv, key, values)
 	}
 	return fmt.Errorf("object %s cannot be used to store values", rv.Type().Name())
@@ -66,7 +67,9 @@ func assignToMap(rv reflect.Value, key string, values []string) error {
 	return err
 }
 
-func assignToStruct(rv reflect.Value, key string, values []string) error {
+func assignToStruct(rval reflect.Value, key string, values []string) error {
+	ptrt := rval.Type()
+	rv := reflect.Indirect(rval)
 	rt := rv.Type()
 	// Look for a Field on struct that matches the key name.
 	for i := 0; i < rt.NumField(); i++ {
@@ -76,12 +79,38 @@ func assignToStruct(rv reflect.Value, key string, values []string) error {
 			tag.name = f.Name
 		}
 		if tag.name == key {
-			fmt.Printf("Assigning %s = %q\n", key, values[0])
-			assignToStructField(rv.FieldByName(f.Name), values)
-			return nil
+			validator := "FormValidate" + f.Name
+			setter := "FormSet" + f.Name
+
+			// If there is a validator, call it.
+			if m, ok := ptrt.MethodByName(validator); ok {
+				fmt.Printf("Validating %s against %v\n", key, m)
+				if err := callFormMethod(m, rval, values); err != nil {
+					return err
+				}
+			}
+
+			// For assignment, if there is a setter, use it. Otherwise, do a
+			// raw assignment.
+			if m, ok := ptrt.MethodByName(setter); ok {
+				fmt.Printf("Setting %s with %v\n", key, m)
+				return callFormMethod(m, rval, values)
+			} else {
+				assignToStructField(rv.FieldByName(f.Name), values)
+				return nil
+			}
 		}
 	}
 	fmt.Printf("Skipped key %q", key)
+	return nil
+}
+
+func callFormMethod(method reflect.Method, target reflect.Value, values []string) error {
+	retvals := method.Func.Call([]reflect.Value{target, reflect.ValueOf(values)})
+	if !retvals[0].IsNil() {
+		// An error occurred
+		return retvals[0].Interface().(error)
+	}
 	return nil
 }
 

@@ -1,9 +1,11 @@
 package form
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -224,5 +226,54 @@ func TestAssignToStruct(t *testing.T) {
 	}
 	if !ats.IsUseless {
 		t.Error("Expected IsUseless to be true")
+	}
+}
+
+type FixtureAddress struct {
+	Street string `form:"street"`
+	City   string `form:"city"`
+	State  string `form:"state"`
+	Zip    int    `form:"zip"`
+}
+
+func (f *FixtureAddress) FormValidateState(vs []string) error {
+	if len(vs) == 0 {
+		return errors.New("state is required")
+	}
+	if vs[0] != "Illinois" {
+		return errors.New("unknown state")
+	}
+	return nil
+}
+
+func (f *FixtureAddress) FormSetCity(vs []string) error {
+	f.City = strings.ToLower(vs[0])
+	fmt.Printf("set city to %s", f.City)
+	return nil
+}
+
+func TestUnmarshal(t *testing.T) {
+	v := url.Values{}
+
+	v.Set("street", "1234 Long St.")
+	v.Set("city", "Glenview")
+	v.Set("state", "Illinois")
+	v.Set("zip", "60626")
+
+	addr := &FixtureAddress{}
+	if err := Unmarshal(v, addr); err != nil {
+		t.Fatal(err)
+	}
+
+	if addr.Street != "1234 Long St." {
+		t.Errorf("Unexpected address: %s", addr.Street)
+	}
+
+	if addr.City != "glenview" {
+		t.Errorf("Unexpected city: %q", addr.State)
+	}
+
+	if addr.Zip != 60626 {
+		t.Errorf("Unexpected ZIP: %d", addr.Zip)
 	}
 }
