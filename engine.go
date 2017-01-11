@@ -13,12 +13,16 @@ import (
 	"github.com/Masterminds/sprig"
 )
 
-// NoTemplateFound indicates that a desired template cannot be located.
 var (
+	// NoTemplateFound indicates that a desired template cannot be located.
 	NoTemplateFound = errors.New("no template found")
-	NoAssetFound    = errors.New("no asset found")
-	IllegalName     = errors.New("name contains illegal patterns")
+	// NoAssetFound indicates that no asset could be loaded.
+	NoAssetFound = errors.New("no asset found")
+	// IllegalName indicates that a name contains illegal characters or patterns.
+	IllegalName = errors.New("name contains illegal patterns")
 )
+
+var NamedTemplateSeparator = "#"
 
 // New creates a new *Template and processes the given directories.
 //
@@ -104,7 +108,7 @@ func (e *Engine) Render(name string, data interface{}) (string, error) {
 
 	// Support explicitly named templates (things from a template
 	// define) by accessing them directly.
-	if strings.HasPrefix(name, "#") {
+	if strings.HasPrefix(name, NamedTemplateSeparator) {
 		err := e.master.ExecuteTemplate(&buf, name[1:], data)
 		return buf.String(), err
 	}
@@ -238,7 +242,7 @@ func (e *Engine) parse() error {
 					if tname == "master" || tname == f {
 						continue
 					}
-					e.cache[d][r+"#"+tname] = true
+					e.cache[d][r+NamedTemplateSeparator+tname] = true
 				}
 			}
 
