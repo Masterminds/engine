@@ -1,6 +1,7 @@
 # The Engine: A Web Theme Engine for Go
 [![Stability:
 Experimental](https://masterminds.github.io/stability/experimental.svg)](https://masterminds.github.io/stability/experimental.html)
+[![Build Status](https://travis-ci.org/Masterminds/engine.svg)](https://travis-ci.org/Masterminds/engine) [![GoDoc](https://godoc.org/github.com/Masterminds/engine?status.png)](https://godoc.org/github.com/Masterminds/engine) [![Go Report Card](http://goreportcard.com/badge/Masterminds/engine)](http://goreportcard.com/report/Masterminds/engine)
 
 This library provides tools for managing themes (a collection of
 templates and supporting files) for Go. It allows theme chaining
@@ -15,7 +16,6 @@ With this library, you can:
 - Cascade and override themes
 - Provide easy support for re-theming an existing app
 
-[![Build Status](https://travis-ci.org/Masterminds/engine.svg)](https://travis-ci.org/Masterminds/engine) [![GoDoc](https://godoc.org/github.com/Masterminds/engine?status.png)](https://godoc.org/github.com/Masterminds/engine) [![Go Report Card](http://goreportcard.com/badge/Masterminds/engine)](http://goreportcard.com/report/Masterminds/engine)
 
 ## Usage
 
