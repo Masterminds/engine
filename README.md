@@ -1,4 +1,6 @@
 # The Engine: A Web Theme Engine for Go
+[![Stability:
+Experimental](https://masterminds.github.io/stability/experimental.svg)](https://masterminds.github.io/stability/experimental.html)
 
 This library provides tools for managing themes (a collection of
 templates and supporting files) for Go. It allows theme chaining
@@ -76,3 +78,7 @@ func main() {
     path, err := e.Asset("main.css")
 }
 ```
+
+In the example above, not that we load two of the three available
+templates. Engine's primary roll, then, is to negotiate which theme
+should be used for each individual render call.

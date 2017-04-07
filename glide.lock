@@ -1,0 +1,24 @@
+hash: 87c210aa1a08b4c6fe23aff96a494b80551f9e3a7fb03488c1fdeb32515ff119
+updated: 2017-04-07T09:22:35.868308986-06:00
+imports:
+- name: github.com/aokoli/goutils
+  version: 5e8cbdfe987ad788b91aceb88ce79545bc12b1f0
+- name: github.com/Masterminds/goutils
+  version: 5e8cbdfe987ad788b91aceb88ce79545bc12b1f0
+- name: github.com/Masterminds/semver
+  version: 59c29afe1a994eacb71c833025ca7acf874bb1da
+- name: github.com/Masterminds/sprig
+  version: dba49a8d3a46ae8522f79e2c0241842d6ab613ca
+- name: github.com/satori/go.uuid
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
+- name: golang.org/x/crypto
+  version: 420870623a70591d5e0b187c77c95455a1224ca6
+  subpackages:
+  - scrypt
+  - pbkdf2
+- name: golang.org/x/net
+  version: d1e1b351919c6738fdeb9893d5c998b161464f0c
+  subpackages:
+  - html
+  - html/atom
+devImports: []
